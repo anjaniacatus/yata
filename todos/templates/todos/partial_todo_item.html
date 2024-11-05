@@ -1,0 +1,19 @@
+<div class="todo_item border-solid border border-green-100 rounded-lg shadow-md bg-white pl-4 pr-4 pt-2 pb-2 flex justify-between "
+    id="item-{{ item.id }}">
+    <div>
+
+        <input type="checkbox" class="h-6 w-6 rounded border-green-300 text-green-600
+        accent-green-400 
+        cursor-pointer
+        inline-block align-middle
+        " data-testid="toggle_item_{{ item.id }}" {% if item.completed %} checked {% endif %}
+            hx-put="{% url 'action_toggle_todo' item.id %}" />
+
+        <span class="inline-block align-middle px-2 font-semibold font-normal
+        "> {{ item.title }}</span>
+    </div>
+    <button class="button" data-testid="delete_item_{{ item.id }}" hx-delete="{% url 'action_delete_todo' item.id %}"
+        hx-target="#item-{{ item.id }}" hx-swap="outerHTML">
+        Delete
+    </button>
+</div>
