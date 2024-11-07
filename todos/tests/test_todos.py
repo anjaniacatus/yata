@@ -1,3 +1,5 @@
+import pytest
+
 from django.urls import reverse
 from playwright.sync_api import Page, expect
 from todos.models import TodoItem
@@ -69,12 +71,12 @@ def test_checkbox_loads_correctly(live_server, page: Page):
 
 def test_delete_item(live_server, page: Page):
     item = TodoItem.objects.create(title="Awesome task", completed=True)
+    print(item.id)
     page.goto(reverse_url(live_server, "index"))
 
     delete_id = f"delete_item_{item.id}"
     page.get_by_test_id(delete_id).click()
-
     expect(page.get_by_test_id("todo_items")).not_to_contain_text("Awesome task")
 
     with pytest.raises(TodoItem.DoesNotExist):
-        models.TodoItem.objects.get(id=item.id)
+        TodoItem.objects.get(id=item.id)

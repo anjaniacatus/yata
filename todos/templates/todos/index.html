@@ -1,75 +1,52 @@
+{% extends "todos/_base.html" %}
 {% load tailwind_filters %}
-{% load static%}
-<html lang="en">
+{% load partials %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Things to do</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'todos/tailwind_output.css' %}">
-    <script src="//unpkg.com/alpinejs" defer></script>
-    <script src="https://unpkg.com/htmx.org@1.9.11"
-            integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
-            crossorigin="anonymous">
-    </script>
-    <script src="{% static 'todos/utils.js' %}"></script>
-</head>
+{% partialdef todo-item %}
+<div class="todo_item border-solid border border-green-100 rounded-lg shadow-md bg-white pl-4 pr-4 pt-2 pb-2 flex justify-between "
+    id="item-{{ item.id }}">
+    <div>
 
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <div class="flex items-center justify-between p-6 border-b mb-5">
-        <a href="/" class="text-orange-500 font-bold text-3xl">YATA!</a>
-        <div class="hidden lg:block">
-            <nav class="gap-x-4 flex">
-                <a href="#"
-                    class="bg-orange-600 hover:bg-orange-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">About</a>
-                <a href="#"
-                    class="bg-orange-600 hover:bg-orange-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Contact</a>
-                <a href="#"
-                    class="bg-orange-600 hover:bg-orange-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Whatever</a>
-            </nav>
-        </div>
+        <input type="checkbox" class="h-6 w-6 rounded border-green-300 text-green-600
+        accent-green-400 
+        cursor-pointer
+        inline-block align-middle
+        " data-testid="toggle_item_{{ item.id }}" {% if item.completed %} checked {% endif %}
+            hx-put="{% url 'action_toggle_todo' item.id %}" />
 
-        <div class="block lg:hidden" x-data="{ open: false }">
-            <button @click="open = ! open"
-                class="bg-orange-600 hover:bg-orange-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Menu
-                🔽
-            </button>
-            <div x-show="open" class="fixed z-10 right-5 bg-white border shadow-lg rounded-lg p-2">
-                <nav class="flex flex-col text-left gap-2">
-                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">About</a>
-                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Contact</a>
-                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Whatever</a>
-                </nav>
-            </div>
-        </div>
-    </div> 
-    <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4 pt-4">    
-        <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Things to do
-        </h1>
-        <div id="todo_items" class="space-y-2">
-            {% for item in todo_items %}
-            {% include "todos/partial_todo_item.html" %}
-            {% endfor %}
-        </div>
-       <div class="text-center text-2xl font-bold text-transparent/30 pt-6"  id="todo_items_empty">
-            Nothing to see here...
-        </div>
-
-        <div class="inset-x-0 bottom-2 flex justify-center">
-            <div>
-                <h2
-                    class="text-xl font-bold leading-7 text-gray-800 sm:truncate sm:text-2xl sm:tracking-tight text-center">
-                    Add Item</h2>
-
-                <form hx-post="{% url 'action_add_new_todo' %}" hx-target="#todo_items" hx-swap="beforeend">
-                    {% csrf_token %}
-                    {{ form | crispy }}
-                    <input type="submit" value="Add"
-                        class="rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600">
-                </form>
-            </div>
+        <span class="inline-block align-middle px-2 font-semibold font-normal
+        "> {{ item.title }}</span>
+    </div>
+    <button class="button" data-testid="delete_item_{{ item.id }}" hx-delete="{% url 'action_delete_todo' item.id %}"
+        hx-target="#item-{{ item.id }}" hx-swap="outerHTML">
+        Delete
+    </button>
+</div>
+{% endpartialdef todo-item %}
+{% block content %} 
+<div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-4 pt-4">
+    <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Things to do
+    </h1>
+    <div data-testid="todo_items" id="todo_items" class="space-y-2">
+        {% for item in todo_items %}
+            {% partial todo-item %}
+        {% endfor %}
+    </div>
+    <div class="text-center text-2xl font-bold text-transparent/30 pt-6"  id="todo_items_empty">
+        Nothing to see here...
+    </div>
+    <div class="inset-x-0 bottom-2 flex justify-center">
+        <div>
+            <h2 
+                class="text-xl font-bold leading-7 text-gray-800 sm:truncate sm:text-2xl sm:tracking-tight text-center">Add Item
+            </h2>
+            <form hx-post="{% url 'action_add_new_todo' %}" hx-target="#todo_items" hx-swap="beforeend">
+                {% csrf_token %}
+                {{ form | crispy }}
+                <input type="submit" value="Add" class="button"/>
+            </form>
         </div>
     </div>
-</body>
+</div>
+{% endblock %}
 
-</html>

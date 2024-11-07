@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_browser_reload',
-    "crispy_forms",
-    "crispy_tailwind",
+    'crispy_forms',
+    'crispy_tailwind',
+    'template_partials'
 ]
 
 MIDDLEWARE = [

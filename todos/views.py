@@ -15,7 +15,7 @@ def index(request):
 def action_add_new_todo(request):
     form = forms.CreateTodoForm(request.POST)
     instance = form.save()
-    return render(request, "todos/partial_todo_item.html", {"item": instance})
+    return render(request, "todos/index.html#todo-item", {"item": instance})
 
 @require_http_methods(["PUT"])
 def action_toggle_todo(request, item_id):

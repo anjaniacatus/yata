@@ -1,0 +1,52 @@
+{% load tailwind_filters %}
+{% load static%}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Things to do</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'todos/tailwind_output.css' %}">
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11"
+            integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
+            crossorigin="anonymous">
+    </script>
+    <script src="{% static 'todos/utils.js' %}"></script>
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <div class="flex items-center justify-between p-6 border-b mb-5">
+        <a href="/" class="text-primary-500 font-bold text-3xl">YATA!</a>
+        <div class="hidden lg:block">
+            <nav class="gap-x-4 flex">
+                <a href="#"
+                    class="bg-primary-600 hover:bg-primary-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">About</a>
+                <a href="#"
+                    class="bg-primary-600 hover:bg-primary-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Contact</a>
+                <a href="#"
+                    class="bg-primary-600 hover:bg-primary-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Whatever</a>
+            </nav>
+        </div>
+
+        <div class="block lg:hidden" x-data="{ open: false }">
+            <button @click="open = ! open"
+                class="bg-primary-600 hover:bg-primary-700 text-gray-100 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Menu
+                🔽
+            </button>
+            <div x-show="open" class="fixed z-10 right-5 bg-white border shadow-lg rounded-lg p-2">
+                <nav class="flex flex-col text-left gap-2">
+                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">About</a>
+                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Contact</a>
+                    <a href="#" class="text-gray-700 font-bold rounded-full pt-1 pb-1 pl-3 pr-3">Whatever</a>
+                </nav>
+            </div>
+        </div>
+    </div> 
+
+    {% block content %}
+    Replace in child templates
+    {% endblock %}
+</body>
+
+</html>
