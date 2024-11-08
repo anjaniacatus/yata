@@ -36,6 +36,14 @@ def test_create_todo_item_shows_new_item(live_server, page: Page):
     page.get_by_role("button", name="Add").click()
     page.wait_for_selector("text=foo")
 
+def test_todo_item_form_should_be_blank_after_validation(live_server, page: Page):
+    url = reverse_url(live_server, "index")
+
+    page.goto(url)
+    page.get_by_label("Title").click()
+    page.get_by_label("Title").fill("Hello")
+    page.get_by_role("button", name="Add").click()
+    expect(page.get_by_label("Title")).to_have_text("")
 
 def test_display_one_item_on_first_load(live_server, page: Page):
     TodoItem.objects.create(title="read Nicolas Machiavel book : The Prince")
@@ -71,7 +79,6 @@ def test_checkbox_loads_correctly(live_server, page: Page):
 
 def test_delete_item(live_server, page: Page):
     item = TodoItem.objects.create(title="Awesome task", completed=True)
-    print(item.id)
     page.goto(reverse_url(live_server, "index"))
 
     delete_id = f"delete_item_{item.id}"
